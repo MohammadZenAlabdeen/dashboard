@@ -4,7 +4,7 @@ import connectMongoDB from '@/utils/mongodb'
 export async function GET() {
   await connectMongoDB()
   try {
-    const foundPermissions = await Permission.find()
+    const foundPermissions = await Permission.find().populate('Role')
     return new Response(
       JSON.stringify({ message: 'Permissions Found Successfully' }),
       {

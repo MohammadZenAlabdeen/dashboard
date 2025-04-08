@@ -3,6 +3,8 @@ import { cookies } from 'next/headers'
 import { ZodError } from 'zod'
 import verify from '@/utils/validate_token'
 import connectMongoDB from '@/utils/mongodb'
+import { redirect } from 'next/navigation'
+import Permission from '@/models/Permission'
 
 export async function POST(req) {
   const data = await req.json()
@@ -36,10 +38,34 @@ export async function POST(req) {
       )
     }
 
+    if (data.permissions && data.permissions.length > 0) {
+      const existingPermissions = await Permission.find({
+        _id: { $in: data.permissions },
+      })
+      if (existingPermissions.length !== data.permissions.length) {
+        return new Response(
+          JSON.stringify({ message: 'One or more permissions not found' }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+      }
+    }
+
     const newRole = await Role.create({
       name: data.name,
-      // permissions: data.permissions
+      permissions: data.permissions || [],
     })
+
+    if (data.permissions && data.permissions.length > 0) {
+      await Permission.updateMany(
+        { _id: { $in: data.permissions } },
+        { $addToSet: { roles: newRole._id } }
+      )
+    }
 
     return new Response(
       JSON.stringify({ message: 'Role added successfully' }),
