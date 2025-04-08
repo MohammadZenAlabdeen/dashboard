@@ -15,6 +15,7 @@ const UserSchema= new mongoose.Schema(
         },
         token:{
             type:String,
+            
         },
         role:{
             type:mongoose.Schema.Types.ObjectId,
