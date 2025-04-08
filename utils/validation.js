@@ -10,7 +10,7 @@ export const RegisterSchema = z.object({
     path: ["confirmPassword"],
 });
 
-export const LoignSchema = z.object({
+export const LoginSchema = z.object({
     email: z.string({ message: "email must be a string" }).email("must be a valid mail"),
     password: z.string({ message: "password must be a string" }).min(8, "password must be at least 8 characters long")
 })
