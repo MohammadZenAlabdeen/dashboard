@@ -3,41 +3,13 @@
 import Category from "@/models/Category";
 import connectMongoDB from "@/utils/mongodb";
 import verifyToken from "@/utils/validate_token";
+import VerifyToken from "@/utils/verify-token";
 import { parse } from "cookie";
 
 export async function GET(req) {
     await connectMongoDB();
     try {
-        const cookies = req.headers.get("Cookie");
-        if (!cookies) {
-            return new Response(JSON.stringify({ message: "No cookies found" }), {
-                status: 400,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        const parsedCookies = parse(cookies);
-        const token = parsedCookies.jwtToken;
-        if (!token) {
-            return new Response(JSON.stringify({ message: "Token not found in cookies" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        const payload = verifyToken(token);
-        if (payload === null) {
-            return new Response(JSON.stringify({ message: "Invalid token" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
+       const payload=await VerifyToken(req);
 
         const categories = await Category.find();
         if (!categories || categories.length === 0) {
@@ -68,36 +40,8 @@ export async function GET(req) {
 export async function POST(req) {
     await connectMongoDB();
     try {
-        const cookies = req.headers.get("Cookie");
-        if (!cookies) {
-            return new Response(JSON.stringify({ message: "No cookies found" }), {
-                status: 400,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
+        const payload=await VerifyToken(req);
 
-        const parsedCookies = parse(cookies);
-        const token = parsedCookies.jwtToken;
-        if (!token) {
-            return new Response(JSON.stringify({ message: "Token not found in cookies" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        const payload = verifyToken(token);
-        if (payload === null) {
-            return new Response(JSON.stringify({ message: "Invalid token" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
     } catch (error) {
 
     }

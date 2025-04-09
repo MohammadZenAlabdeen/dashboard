@@ -1,43 +1,15 @@
 "use server"
 import User from "@/models/User";
 import connectMongoDB from "@/utils/mongodb";
-import verifyToken from "@/utils/validate_token";
+import ValidateToken from "@/utils/validate_token";
+import VerifyToken from "@/utils/verify-token";
 import { parse, serialize } from "cookie";
-import Cookies from "cookies";
-import { verify } from "jsonwebtoken";
+
 
 export async function GET(req) {
     await connectMongoDB()
     try {
-        const cookies = req.headers.get("Cookie");
-        if (!cookies) {
-            return new Response(JSON.stringify({ message: "No cookies found" }), {
-                status: 400,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        const parsedCookies = parse(cookies);
-        const token = parsedCookies.jwtToken;
-        if (!token) {
-            return new Response(JSON.stringify({ message: "Token not found in cookies" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-        const payload = verifyToken(token);
-        if (payload === null) {
-            return new Response(JSON.stringify({ message: "Invalid token" }), {
-                status: 401,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-        }
+        const payload=await VerifyToken(req);
         const user = await User.updateOne({ email: payload.email }, { $set: { token: "" } });
         
         const cookie = serialize("jwtToken", "", {
@@ -56,8 +28,8 @@ export async function GET(req) {
         })
 
     } catch (error) {
-        return new Response(JSON.stringify({ message: "Internal server error" }), {
-            status: 500,
+        return new Response(JSON.stringify({ message: error.message||"Internal server error"}), {
+            status: error.message? 403:500,
             headers: {
                 "Content-Type": "application/json"
             }
