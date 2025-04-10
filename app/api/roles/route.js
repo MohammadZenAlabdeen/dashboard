@@ -1,12 +1,10 @@
 import Role from '@/models/Role';
 import { ZodError } from 'zod';
-import verify from '@/utils/validate_token';
 import connectMongoDB from '@/utils/mongodb';
 import Permission from '@/models/Permission';
 import { RoleSchema } from '@/utils/validation';
 import { ObjectId } from 'mongodb';
-
-import { TokenError, ValidationError, GenericError } from "@/utils/custom-errors";
+import { TokenError, ValidationError, GenericError, formatZodErrors } from "@/utils/custom-errors";
 import VerifyToken from '@/utils/verify-token';
 
 export async function POST(req) {
@@ -15,7 +13,6 @@ export async function POST(req) {
 
   try {
       const payload = await VerifyToken(req);
-      console.log(payload);
 
       if (payload.role !== "admin") {
           throw new TokenError("Unauthorized access");
@@ -55,20 +52,42 @@ export async function POST(req) {
           }
       );
   } catch (error) {
-      if (error instanceof ZodError) {
-          const validationError = ValidationError.fromZodError(error); // Create ValidationError from ZodError
-          return new Response(JSON.stringify(validationError.toJSON()), {
-              status: validationError.statusCode,
-              headers: { "Content-Type": "application/json" },
-          });
+    if (error instanceof ZodError) {
+      const formattedErrors = formatZodErrors(error);
+      return new Response(
+          JSON.stringify({
+              message: "Validation failed",
+              errors: formattedErrors,
+          }),
+          {
+              status: 400,
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          }
+      );
+  } else if (error instanceof TokenError) {
+          return new Response(
+              JSON.stringify(error.toJSON()),
+              {
+                  status: error.statusCode,
+                  headers: { "Content-Type": "application/json" },
+              }
+          );
+      } else if (error instanceof GenericError) {
+          return new Response(
+              JSON.stringify(error.toJSON()),
+              {
+                  status: error.statusCode,
+                  headers: { "Content-Type": "application/json" },
+              }
+          );
       }
 
       return new Response(
-          JSON.stringify({
-              message: error.message || "Internal server error",
-          }),
+          JSON.stringify({ message: "Internal server error" }),
           {
-              status: error.statusCode || 500,
+              status: 500,
               headers: { "Content-Type": "application/json" },
           }
       );
@@ -77,14 +96,16 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   await connectMongoDB();
+
   try {
-      const payload = await verify(req);
+      const payload = await VerifyToken(req);
+
       if (payload.role !== "admin") {
           throw new TokenError("Unauthorized access");
       }
 
-      const { id } = await req.json();
-      const roleId = new ObjectId(id);
+      const data = await req.json();
+      const roleId = new ObjectId(data.id);
       const role = await Role.findByIdAndDelete(roleId);
 
       if (!role) {
@@ -94,7 +115,6 @@ export async function DELETE(req) {
       return new Response(
           JSON.stringify({
               message: "Role is deleted successfully",
-              role: role,
           }),
           {
               status: 200,
@@ -104,15 +124,29 @@ export async function DELETE(req) {
           }
       );
   } catch (error) {
+      if (error instanceof TokenError) {
+          return new Response(
+              JSON.stringify(error.toJSON()),
+              {
+                  status: error.statusCode,
+                  headers: { "Content-Type": "application/json" },
+              }
+          );
+      } else if (error instanceof GenericError) {
+          return new Response(
+              JSON.stringify(error.toJSON()),
+              {
+                  status: error.statusCode,
+                  headers: { "Content-Type": "application/json" },
+              }
+          );
+      }
+
       return new Response(
-          JSON.stringify({
-              message: error.message || "Internal server error",
-          }),
+          JSON.stringify({ message: "Internal server error" }),
           {
-              status: error.statusCode || 500,
-              headers: {
-                  "Content-Type": "application/json",
-              },
+              status: 500,
+              headers: { "Content-Type": "application/json" },
           }
       );
   }

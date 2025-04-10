@@ -8,12 +8,14 @@ import { serialize } from "cookie";
 import connectMongoDB from "@/utils/mongodb";
 import Role from "@/models/Role";
 import Permission from "@/models/Permission";
+import { ValidationError, GenericError, formatZodErrors } from "@/utils/custom-errors";
 
 export async function POST(req) {
     const data = await req.json();
     await connectMongoDB();
     try {
         RegisterSchema.parse({ name: data.name, email: data.email, password: data.password, confirmPassword: data.confirmPassword });
+
         const password = hashUserPassword(data.password);
         const token = generatetoken(data.name, "user");
 
@@ -38,12 +40,7 @@ export async function POST(req) {
 
         let user = await User.findOne({ email: data.email });
         if (user) {
-            return new Response(JSON.stringify({ message: "The email is already in use" }), {
-                status: 409,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            throw new GenericError("The email is already in use", 409);
         }
 
         await User.create({
@@ -58,45 +55,51 @@ export async function POST(req) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             path: "/",
-            sameSite: 'strict',
+            sameSite: "strict",
             maxAge: 60 * 60 * 24 * 30,
         });
 
-        return new Response(JSON.stringify({ message: "User registered successfully" }), {
-            status: 201,
-            headers: {
-                "Set-Cookie": cookie,
-                "Content-Type": "application/json"
+        return new Response(
+            JSON.stringify({ message: "User registered successfully" }),
+            {
+                status: 201,
+                headers: {
+                    "Set-Cookie": cookie,
+                    "Content-Type": "application/json",
+                },
             }
-        });
-
+        );
     } catch (error) {
         if (error instanceof ZodError) {
+            const formattedErrors = formatZodErrors(error);
             return new Response(
                 JSON.stringify({
-                    name: "ValidationError",
                     message: "Validation failed",
-                    statusCode: 400,
-                    details: error.errors.map(err => ({
-                        code: err.code,
-                        path: err.path.join("."),
-                        message: err.message
-                    })),
+                    errors: formattedErrors,
                 }),
                 {
                     status: 400,
                     headers: {
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                    },
                 }
             );
-        } else {
-            return new Response(JSON.stringify({ message: error.message || "Internal server error" }), {
-                status: 500,
-                headers: {
-                    "Content-Type": "application/json"
+        } else if (error instanceof GenericError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
                 }
-            });
+            );
         }
+
+        return new Response(
+            JSON.stringify({ message: error.message || "Internal server error" }),
+            {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     }
 }
