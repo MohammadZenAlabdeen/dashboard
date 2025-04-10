@@ -41,7 +41,7 @@ export async function PUT(req, { params }) {
                 },
             },
             { new: true }
-        );
+        ).select("name email role").populate("role","name");
 
         if (!user) {
             throw new GenericError("Failed to update user", 500);
