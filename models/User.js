@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Role from "./Role";
 const UserSchema= new mongoose.Schema(
     {
         name:{
@@ -19,7 +20,7 @@ const UserSchema= new mongoose.Schema(
         },
         role:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Role"
+            ref:Role
         }
     }
 )
