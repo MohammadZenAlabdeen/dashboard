@@ -1,40 +1,47 @@
 "use server";
 import User from "@/models/User";
-import connectMongoDB from "@/utils/mongodb";
-import VerifyToken from "@/utils/verify-token";
-import { serialize } from "cookie";
-import { LoginSchema, ValidationError, TokenError, GenericError, formatZodErrors } from "@/utils/custom-errors";
+import { LoginSchema } from "@/utils/validation";
 import { ZodError } from "zod";
+import generatetoken from "@/utils/generate_token";
+import { serialize } from "cookie";
+import connectMongoDB from "@/utils/mongodb";
+import { ValidationError, GenericError, formatZodErrors } from "@/utils/custom-errors";
+import { hashUserPassword } from "@/utils/hash";
 
-export async function GET(req) {
+export async function POST(req) {
+    const data = await req.json();
     await connectMongoDB();
     try {
-        const data = await req.body();
-        LoginSchema.parse(data);
-
-        const payload = await VerifyToken(req);
-
-        if (!payload.email) {
-            throw new TokenError("Invalid token");
+        LoginSchema.parse({ email: data.email, password: data.password });
+        console.log(data.email)
+        const user = await User.findOne({ email: data.email }).populate("role");
+        if (!user) {
+            throw new GenericError("Invalid email or password", 401);
         }
 
-        await User.updateOne({ email: payload.email }, { $set: { token: "" } });
+        const isPasswordValid = hashUserPassword(data.password, user.password);
+        if (!isPasswordValid) {
+            throw new GenericError("Invalid email or password", 401);
+        }
 
-        const cookie = serialize("jwtToken", "", {
+        const token = generatetoken(user.name, user.role.name);
+        const cookie = serialize("jwtToken", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             path: "/",
             sameSite: "strict",
-            maxAge: 0,
+            maxAge: 60 * 60 * 24 * 30,
         });
 
         return new Response(
-            JSON.stringify({ message: "Logged out successfully" }),
+            JSON.stringify({
+                message: "Login successful",
+            }),
             {
                 status: 200,
                 headers: {
-                    "Content-Type": "application/json",
                     "Set-Cookie": cookie,
+                    "Content-Type": "application/json",
                 },
             }
         );
@@ -48,16 +55,6 @@ export async function GET(req) {
                 }),
                 {
                     status: 400,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-        } else if (error instanceof TokenError) {
-            return new Response(
-                JSON.stringify(error.toJSON()),
-                {
-                    status: error.statusCode,
                     headers: { "Content-Type": "application/json" },
                 }
             );
