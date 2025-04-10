@@ -1,17 +1,24 @@
-"use server"
+"use server";
 import User from "@/models/User";
 import connectMongoDB from "@/utils/mongodb";
-import ValidateToken from "@/utils/validate_token";
 import VerifyToken from "@/utils/verify-token";
-import { parse, serialize } from "cookie";
-
+import { serialize } from "cookie";
+import { TokenError, GenericError } from "@/utils/custom-errors";
 
 export async function GET(req) {
-    await connectMongoDB()
+    await connectMongoDB();
     try {
-        const payload=await VerifyToken(req);
+        const payload = await VerifyToken(req);
+
+        if (!payload.email) {
+            throw new TokenError("Invalid token");
+        }
+
         const user = await User.updateOne({ email: payload.email }, { $set: { token: "" } });
-        
+        if (!user) {
+            throw new GenericError("Failed to log out user", 500);
+        }
+
         const cookie = serialize("jwtToken", "", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -19,20 +26,42 @@ export async function GET(req) {
             sameSite: "strict",
             maxAge: 0,
         });
-        return new Response(JSON.stringify({ message: "Logged out succesfully" }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-                "Set-Cookie":cookie
-        }
-        })
 
-    } catch (error) {
-        return new Response(JSON.stringify({ message: error.message||"Internal server error"}), {
-            status: error.message? 403:500,
-            headers: {
-                "Content-Type": "application/json"
+        return new Response(
+            JSON.stringify({ message: "Logged out successfully" }),
+            {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Set-Cookie": cookie,
+                },
             }
-        })
+        );
+    } catch (error) {
+        if (error instanceof TokenError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        } else if (error instanceof GenericError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
+
+        return new Response(
+            JSON.stringify({ message: error.message || "Internal server error" }),
+            {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     }
 }

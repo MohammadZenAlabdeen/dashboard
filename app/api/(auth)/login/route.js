@@ -1,66 +1,82 @@
 "use server";
 import User from "@/models/User";
-import generatetoken from "@/utils/generate_token";
-import { verifyPassword } from "@/utils/hash";
 import connectMongoDB from "@/utils/mongodb";
-import { LoginSchema } from "@/utils/validation";
+import VerifyToken from "@/utils/verify-token";
 import { serialize } from "cookie";
+import { LoginSchema, ValidationError, TokenError, GenericError, formatZodErrors } from "@/utils/custom-errors";
 import { ZodError } from "zod";
 
-export async function POST(req) {
-    const data = await req.json();
+export async function GET(req) {
     await connectMongoDB();
-
     try {
-        LoginSchema.parse({ email: data.email, password: data.password });
+        const data = await req.body();
+        LoginSchema.parse(data);
 
-        const user = await User.findOne({ email: data.email });
-        if (!user) {
-            return new Response(JSON.stringify({ message: "The email doesn't exist" }), {
-                status: 404,
-                headers: { "Content-Type": "application/json" },
-            });
+        const payload = await VerifyToken(req);
+
+        if (!payload.email) {
+            throw new TokenError("Invalid token");
         }
 
-        const match = verifyPassword(user.password, data.password);
-        if (!match) {
-            return new Response(JSON.stringify({ message: "The password isn't correct" }), {
-                status: 403,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
+        await User.updateOne({ email: payload.email }, { $set: { token: "" } });
 
-        const token = generatetoken(user.name, user.role);
-
-        await User.updateOne({ _id: user._id }, { $set: { token: token } });
-
-        const cookie = serialize("jwtToken", token, {
+        const cookie = serialize("jwtToken", "", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             path: "/",
             sameSite: "strict",
-            maxAge: 60 * 60 * 24 * 30,
+            maxAge: 0,
         });
 
-        return new Response(JSON.stringify({ message: "User logged in successfully" }), {
-            status: 200,
-            headers: {
-                "Set-Cookie": cookie,
-                "Content-Type": "application/json",
-            },
-        });
+        return new Response(
+            JSON.stringify({ message: "Logged out successfully" }),
+            {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Set-Cookie": cookie,
+                },
+            }
+        );
     } catch (error) {
-        console.error("Error during login:", error);
         if (error instanceof ZodError) {
-            return new Response(JSON.stringify({ errors: error.errors }), {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-            });
-        } else {
-            return new Response(JSON.stringify({ message: "Internal server error" }), {
+            const formattedErrors = formatZodErrors(error);
+            return new Response(
+                JSON.stringify({
+                    message: "Validation failed",
+                    errors: formattedErrors,
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+        } else if (error instanceof TokenError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        } else if (error instanceof GenericError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
+
+        return new Response(
+            JSON.stringify({ message: error.message || "Internal server error" }),
+            {
                 status: 500,
                 headers: { "Content-Type": "application/json" },
-            });
-        }
+            }
+        );
     }
 }
