@@ -31,7 +31,7 @@ export const LoignSchema = z.object({
 
 export const RoleSchema = z.object({
   role: z.string({ message: 'Role must be string' }),
-})
+  permissions: z.array(z.string()).min(1, { message: 'Permissions array must contain at least one permission' }).max(10, { message: 'Permissions array cannot exceed 10 items' }),})
 export const LoginSchema = z.object({
   email: z
     .string({ message: 'email must be a string' })
