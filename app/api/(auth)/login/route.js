@@ -6,6 +6,7 @@ import connectMongoDB from "@/utils/mongodb";
 import { LoginSchema } from "@/utils/validation";
 import { serialize } from "cookie";
 import { ZodError } from "zod";
+import { ValidationError, GenericError } from "@/utils/custom-errors";
 
 export async function POST(req) {
     const data = await req.json();
@@ -14,23 +15,17 @@ export async function POST(req) {
     try {
         LoginSchema.parse({ email: data.email, password: data.password });
 
-        const user = await User.findOne({ email: data.email });
+        const user = await User.findOne({ email: data.email }).populate("role");
         if (!user) {
-            return new Response(JSON.stringify({ message: "The email doesn't exist" }), {
-                status: 404,
-                headers: { "Content-Type": "application/json" },
-            });
+            throw new GenericError("The email doesn't exist", 404);
         }
 
         const match = verifyPassword(user.password, data.password);
         if (!match) {
-            return new Response(JSON.stringify({ message: "The password isn't correct" }), {
-                status: 403,
-                headers: { "Content-Type": "application/json" },
-            });
+            throw new GenericError("The password isn't correct", 403);
         }
 
-        const token = generatetoken(user.name, user.role);
+        const token = generatetoken(user.name, user.role.name);
 
         await User.updateOne({ _id: user._id }, { $set: { token: token } });
 
@@ -50,17 +45,22 @@ export async function POST(req) {
             },
         });
     } catch (error) {
-        console.error("Error during login:", error);
         if (error instanceof ZodError) {
-            return new Response(JSON.stringify({ errors: error.errors }), {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-            });
-        } else {
-            return new Response(JSON.stringify({ message: "Internal server error" }), {
-                status: 500,
+            const validationError = ValidationError.fromZodError(error);
+            return new Response(JSON.stringify(validationError.toJSON()), {
+                status: validationError.statusCode,
                 headers: { "Content-Type": "application/json" },
             });
         }
+
+        return new Response(
+            JSON.stringify({
+                message: error.message || "Internal server error",
+            }),
+            {
+                status: error.statusCode || 500,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     }
 }

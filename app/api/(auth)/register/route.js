@@ -72,14 +72,26 @@ export async function POST(req) {
 
     } catch (error) {
         if (error instanceof ZodError) {
-            return new Response(JSON.stringify({ errors: error.errors }), {
-                status: 400,
-                headers: {
-                    "Content-Type": "application/json"
+            return new Response(
+                JSON.stringify({
+                    name: "ValidationError",
+                    message: "Validation failed",
+                    statusCode: 400,
+                    details: error.errors.map(err => ({
+                        code: err.code,
+                        path: err.path.join("."),
+                        message: err.message
+                    })),
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
                 }
-            });
+            );
         } else {
-            return new Response(JSON.stringify({ message: "Internal server error" }), {
+            return new Response(JSON.stringify({ message: error.message || "Internal server error" }), {
                 status: 500,
                 headers: {
                     "Content-Type": "application/json"
