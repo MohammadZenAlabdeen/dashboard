@@ -1,4 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+export const config = {
+    api: {
+      bodyParser: true,
+    },
+  };
+export default config;

@@ -5,9 +5,11 @@ import { CategorySchema } from "@/utils/validation";
 import VerifyToken from "@/utils/verify-token";
 import { ZodError } from "zod";
 
-export async function GET(req, { params: { id } }) {
+export async function GET(req, { params }) {
     await connectMongoDB();
+    const { id } = await params;
     try {
+        const payload = await VerifyToken(req);
         if (!id) {
             throw new GenericError("ID is required to fetch category", 400);
         }
@@ -50,8 +52,9 @@ export async function GET(req, { params: { id } }) {
     }
 }
 
-export async function PUT(req, { params: { id } }) {
+export async function PUT(req, { params }) {
     await connectMongoDB();
+    const { id } = await params;
     try {
         const data = await req.json();
         const payload = await VerifyToken(req);
@@ -129,8 +132,9 @@ export async function PUT(req, { params: { id } }) {
     }
 }
 
-export async function DELETE(req, { params: { id } }) {
+export async function DELETE(req, { params }) {
     await connectMongoDB();
+    const { id } = await params;
     try {
         const payload = await VerifyToken(req);
 

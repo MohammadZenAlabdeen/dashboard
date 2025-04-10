@@ -8,6 +8,7 @@ import { ZodError } from "zod";
 export async function GET(req) {
     await connectMongoDB();
     try {
+        const payload=await VerifyToken(req);
         const categories = await Category.find();
         if (!categories || categories.length === 0) {
             throw new GenericError("No categories found", 404);
@@ -25,6 +26,14 @@ export async function GET(req) {
         );
     } catch (error) {
         if (error instanceof GenericError) {
+            return new Response(
+                JSON.stringify(error.toJSON()),
+                {
+                    status: error.statusCode,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }else if(error instanceof TokenError){
             return new Response(
                 JSON.stringify(error.toJSON()),
                 {
