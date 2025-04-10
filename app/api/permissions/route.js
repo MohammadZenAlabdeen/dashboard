@@ -7,12 +7,11 @@ export async function GET(req) {
     await connectMongoDB();
     try {
         const payload = await VerifyToken(req);
-
         if (payload.role !== "admin") {
             throw new TokenError("Unauthorized access");
         }
 
-        const foundPermissions = await Permission.find().populate("Role");
+        const foundPermissions = await Permission.find().populate("roles");
         if (!foundPermissions || foundPermissions.length === 0) {
             throw new GenericError("Permissions not found", 404);
         }

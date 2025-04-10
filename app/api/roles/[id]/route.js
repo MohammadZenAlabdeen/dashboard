@@ -1,13 +1,16 @@
 import Permission from '@/models/Permission'
 import Role from '@/models/Role'
-import { GenericError } from '@/utils/custom-errors'
+import { formatZodErrors, GenericError, TokenError } from '@/utils/custom-errors'
 import connectMongoDB from '@/utils/mongodb'
 import { RoleSchema } from '@/utils/validation'
 import VerifyToken from '@/utils/verify-token'
+import { ZodError } from 'zod'
 
-export async function GET({ params: { id } }) {
+export async function GET(req, { params }) {
   await connectMongoDB()
+  const { id } = await params;
   try {
+    await VerifyToken(req)
     if (!id) {
       throw new GenericError('Role id not found!', 404)
     }
@@ -33,6 +36,11 @@ export async function GET({ params: { id } }) {
         status: error.statusCode,
         headers: { 'Content-Type': 'application/json' },
       })
+    } else if (error instanceof TokenError) {
+      return new Response(JSON.stringify(error.toJSON()), {
+        status: error.statusCode,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     return new Response(JSON.stringify({ message: 'Internal server error' }), {
@@ -46,22 +54,21 @@ export async function PUT(req, { params }) {
   const { id } = await params
   await connectMongoDB()
   try {
-    const data = await req.body
+    const data = await req.json()
     const existingRole = await Role.findById(id).populate('permissions')
-
     const payload = await VerifyToken(req)
     if (payload.role !== 'admin') {
       throw new TokenError('Unauthorized access')
     }
 
-    if (existingRole !== data.role) {
+    if (!existingRole) {
       throw new GenericError("role does'nt exist!", 400)
     }
 
     if (!id) {
       throw new GenericError('ID is required to update role', 400)
     }
-    RoleSchema.parse({ name: data.name, permissions: data.permissions })
+    RoleSchema.parse({ role: data.role, permissions: data.permissions })
 
     if (data.permissions && data.permissions.length > 0) {
       const existingPermissions = await Permission.find({
@@ -77,7 +84,7 @@ export async function PUT(req, { params }) {
       p._id.toString()
     )
 
-    existingRole.name = data.name || existingRole.name
+    existingRole.name = data.role || existingRole.name
     existingRole.permissions = data.permissions || existingRole.permissions
 
     await existingRole.save()
@@ -96,7 +103,7 @@ export async function PUT(req, { params }) {
 
     if (permissionsRemove.length > 0) {
       await Permission.updateMany(
-        { _id: { $in: permissionsToRemoveFrom } },
+        { _id: { $in: permissionsRemove } },
         { $pull: { roles: existingRole._id } }
       )
     }
