@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import SecondaryIntroBtn from '../all-btn/intro-btn/secondary-intro-btn';
 import { ToastContainer, toast } from 'react-toastify';
-import { data } from 'autoprefixer';
 
 function SignUpForm() {
     //  const notifySuccess = () => toast.success(`Sign up Completed ${newUser.name}`);

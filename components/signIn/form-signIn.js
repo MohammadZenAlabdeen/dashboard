@@ -28,7 +28,6 @@ function SignInForm() {
             })
             .catch((error) => {
                 console.log('Error Sign in:', error)
-
             }
             );
     }
