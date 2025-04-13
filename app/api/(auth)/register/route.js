@@ -11,9 +11,10 @@ import Permission from "@/models/Permission";
 import { ValidationError, GenericError, formatZodErrors } from "@/utils/custom-errors";
 
 export async function POST(req) {
-    const data = await req.body;
+    const data = await req.json();
     await connectMongoDB();
     try {
+
         RegisterSchema.parse({ name: data.name, email: data.email, password: data.password, confirmPassword: data.confirmPassword });
 
         const password = hashUserPassword(data.password);
