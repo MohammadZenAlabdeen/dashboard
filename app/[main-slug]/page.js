@@ -1,32 +1,30 @@
-'use client'
-import MainUsersPage from "@/components/users/main-users";
-import MainCategoryesPage from "@/components/categoryes/main-categoryes";
-
-import { notFound, usePathname } from "next/navigation";
+import { cookies } from "next/headers";
+import ValidateToken from "@/utils/validate_token";
+import MainPage from "@/components/Main-dashboard-page/Main-dashboad-page";
 
 
+async function MainDashBoardPage() {
 
 
+  const token = await cookies().get("jwtToken");
+  const payload = await ValidateToken(token.value);
+  
+  //console.log(token);
 
-function MainDashBoardPage() {
-  const path = usePathname();
-
-  if(!path.startsWith('/categoryes') && !path.startsWith('/users')){
-    notFound();
+  if(payload==null){
+    console.log("Payload Error");
   }
-  return (
-    <div >
-      { /* ----Categoryes---- */
-        (path == '/categoryes') &&
-        <MainCategoryesPage />
-      }
-      { /* ----Users---- */
+  else
+  {
+    console.log(payload)
+  }
 
-        (path == '/users') &&
-        <MainUsersPage />
-      }
-      
-    </div>
+  
+
+
+  return (
+    <MainPage />
+
   )
 }
 
