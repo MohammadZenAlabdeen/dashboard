@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react';
-import SecondaryIntroBtn from '../all-btn/intro-btn/secondary-intro-btn';
 import { ToastContainer, toast } from 'react-toastify';
 
 function SignUpForm() {
