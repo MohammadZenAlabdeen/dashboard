@@ -8,7 +8,7 @@ import VerifyToken from "@/utils/verify-token";
 import { ZodError } from "zod";
 
 export async function POST(req) {
-    const data = await req.body;
+    const data = await req.json();
     await connectMongoDB();
     try {
         const payload = await VerifyToken(req);

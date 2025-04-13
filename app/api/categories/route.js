@@ -57,7 +57,7 @@ export async function GET(req) {
 
 export async function POST(req) {
     await connectMongoDB();
-    const data = await req.body;
+    const data = await req.json();
     try {
         const payload = await VerifyToken(req);
 

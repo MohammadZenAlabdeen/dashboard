@@ -9,7 +9,7 @@ import VerifyToken from "@/utils/verify-token";
 export async function PUT(req, { params }) {
     await connectMongoDB();
     const {id}=await params;
-    const data = await req.body;
+    const data = await req.json();
     try {
         const payload = await VerifyToken(req);
         if (payload.role !== "admin") {

@@ -20,30 +20,28 @@ function SignUpForm() {
     );
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {  
+        e.preventDefault();  
+    
+        const apiUrl = '/api/register';  
+ 
+        try {  
+            const response = await fetch(apiUrl, {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json'  
+                },  
+                body: JSON.stringify(newUser),
+            });  
 
-        e.preventDefault();
-
-        const apiUrl = 'http://localhost:3000/api/register';
-
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: newUser,
-
-        })
+    
+            const data = await response.json();
+            console.log('Sign Up Done', data); 
             
-            .then((data) => {
-                console.log('Sign Up Done', data)
-
-            })
-            .catch((error) => {
-                console.log('Error Sign Up:', error)
-            }
-            );
-    }
+        } catch (error) {  
+            console.log('Error Sign Up:', error);  
+        }  
+    }; 
 
 
     return (

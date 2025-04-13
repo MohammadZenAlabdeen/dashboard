@@ -56,7 +56,7 @@ export async function PUT(req, { params }) {
     await connectMongoDB();
     const { id } = await params;
     try {
-        const data = await req.body;
+        const data = await req.json();
         const payload = await VerifyToken(req);
 
         if (payload.role !== "admin") {
