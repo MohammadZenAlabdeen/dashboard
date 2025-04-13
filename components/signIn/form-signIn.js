@@ -3,10 +3,8 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 function SignInForm() {
-    //  const notifySuccess = () => toast.success(`Sign in Completed ${newUser.name}`);
-    // const notifyFail = () => toast.error('Sorry,Sign in Failed!');
-    // notifySuccess();
-    // notifyFail();
+
+    const notify = (message) => toast(message);
 
     const [User, setUser] = useState(
         {
@@ -14,6 +12,7 @@ function SignInForm() {
             password: ''
         }
     );
+
 
     const handleSubmit = async (e) => {
 
@@ -33,6 +32,7 @@ function SignInForm() {
 
             const data = await response.json();
             console.log('Sign In Done', data);
+            notify(data.message);
 
         } catch (error) {
             console.log('Error Log In:', error)
