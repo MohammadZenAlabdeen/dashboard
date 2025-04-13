@@ -1,5 +1,4 @@
 'use client'
-import PrimaryIntroButton from "../all-btn/intro-btn/primary-intro-btn"
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -47,9 +46,11 @@ function SignInForm() {
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-title-black dark:text-white">Password</label>
                 <input type="password" id="password" name="password" value={User.password} onChange={(e) => setUser({ ...User, password: e.target.value })} className="bg-light border border-secondary text-title-black font-bold text-sm rounded-sm  focus:border-light block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="********" required />
             </div>
-            <PrimaryIntroButton>
-                Sign In
-            </PrimaryIntroButton>
+             <button type="submit" className=" flex-1 inline-flex items-center justify-center cursor-pointer p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-title-black rounded-lg group bg-gradient-to-br to-primary from-secondary group-hover:from-secondary group-hover:to-primary hover:text-light dark:text-white">                        
+                            <span className="w-full px-5 py-2.5 transition-all ease-in duration-75 bg-light dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+                                Sign In
+                            </span>                        
+                    </button>
             <ToastContainer autoClose={3000} />
         </form>
 

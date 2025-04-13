@@ -1,3 +1,4 @@
+import { Link } from "lucide-react";
 import PrimaryIntroButton from "../all-btn/intro-btn/primary-intro-btn";
 import SecondaryIntroBtn from "../all-btn/intro-btn/secondary-intro-btn";
 
@@ -34,16 +35,22 @@ function WelcomePage() {
 
         <div className="w-full flex justify-center items-center text-center">
 
-          
-            <SecondaryIntroBtn href='/sign-up'>
+
+          <SecondaryIntroBtn href="/sign-up" >
+            
               Register Now
-            </SecondaryIntroBtn>
-         
-          
-            <PrimaryIntroButton href='/sign-in'>
+            
+          </SecondaryIntroBtn>
+
+
+
+          <PrimaryIntroButton href="/sign-in">
+            
               Sign In
-            </PrimaryIntroButton>
-          
+            
+          </PrimaryIntroButton>
+
+
         </div>
       </div>
 
