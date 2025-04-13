@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import SecondaryIntroBtn from '../all-btn/intro-btn/secondary-intro-btn';
 import { ToastContainer, toast } from 'react-toastify';
+import { data } from 'autoprefixer';
 
 function SignUpForm() {
     //  const notifySuccess = () => toast.success(`Sign up Completed ${newUser.name}`);
@@ -9,7 +10,14 @@ function SignUpForm() {
     // notifySuccess();
     // notifyFail();
 
-    const [newUser, setNewUser] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+    const [newUser, setNewUser] = useState(
+        {
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+        }
+    );
 
 
     const handleSubmit = (e) => {
@@ -24,14 +32,15 @@ function SignUpForm() {
                 'Content-Type': 'application/json'
             },
             body: newUser,
+
         })
+            
             .then((data) => {
                 console.log('Sign Up Done', data)
 
             })
             .catch((error) => {
                 console.log('Error Sign Up:', error)
-
             }
             );
     }
