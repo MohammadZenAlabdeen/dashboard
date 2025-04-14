@@ -9,7 +9,7 @@ async function MainDashBoardPage() {
   const payload = await ValidateToken(token.value);
 
 
-  console.log(token);
+
 
   if(payload==null){
     console.log("Payload Error");
@@ -22,8 +22,7 @@ async function MainDashBoardPage() {
   return (
 <>
     <MainPage />
-    <p></p>
-    <p></p>
+    
     
 </>
   )

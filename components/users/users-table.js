@@ -19,7 +19,7 @@ function UsersTable() {
         fetchUsers()
     }, [])
 
-    // console.log(users.users);
+     console.log(users);
     if (!users) return <Spinner />
     console.log(users.users)
 
