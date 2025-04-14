@@ -1,9 +1,30 @@
-import Link from "next/link";
-import { FaUserCheck, FaUserGear, FaUserMinus } from "react-icons/fa6";
+'use client'
 
+
+import { useState, useEffect } from 'react'
+import Spinner from "../main-spinner/spinner";
+import BtnGroupUserTable from "../btn-group-userTable/btn-group-userTable";
 
 function UsersTable() {
+
+
+    const [users, setUsers] = useState(null)
+
+    useEffect(() => {
+        async function fetchUsers() {
+            const res = await fetch('/api/users')
+            const data = await res.json()
+            setUsers(data)
+        }
+        fetchUsers()
+    }, [])
+
+    // console.log(users.users);
+    if (!users) return <Spinner />
+    console.log(users.users)
+
     return (
+
         <table className="  text-sm text-left w-full text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-title-secondary  border-b-1 border-title-black uppercase bg-light shadow-2xl dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -23,103 +44,35 @@ function UsersTable() {
             </thead>
 
             <tbody >
-                <tr className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
 
-                    <td className="px-6 py-4">
-                        Omar
-                    </td>
-                    <td className="px-6 py-4">
-                        omarw@emali.com
-                    </td>
+                {
+                    (users.users).map(user =>
+                        <tr key={user._id} className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
 
-                    <td className="px-6 py-4 ">
-                        <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">role</p>
-                    </td>
-                    <td className="px-6 py-4">
-                        <div className="flex space-x-2">
+                            <td className="px-6 py-4">
+                                {user.name}
+                            </td>
+                            <td className="px-6 py-4">
+                                {user.email}
+                            </td>
 
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserCheck />
+                            <td className="px-6 py-4 ">
+                                <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">
+                                    {user.role.name}
+                                </p>
+                            </td>
+                            <td className="px-6 py-4">
+                                <BtnGroupUserTable />
+                            </td>
+                        </tr>
+                    )
+                }
 
-                            </button>
-                            <Link href='/users/username'>
-                                <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                    <FaUserGear />
-
-                                </button>
-                            </Link>
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserMinus />
-
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-                <tr className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
-
-                    <td className="px-6 py-4">
-                        Omar
-                    </td>
-                    <td className="px-6 py-4">
-                        omarw@emali.com
-                    </td>
-
-                    <td className="px-6 py-4 ">
-                        <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">role</p>
-                    </td>
-                    <td className="px-6 py-4">
-                        <div className="flex space-x-2">
-
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserCheck />
-
-                            </button>
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserGear />
-
-                            </button>
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserMinus />
-
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-                <tr className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
-
-                    <td className="px-6 py-4">
-                        Omar
-                    </td>
-                    <td className="px-6 py-4">
-                        omarw@emali.com
-                    </td>
-
-                    <td className="px-6 py-4 ">
-                        <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">role</p>
-                    </td>
-                    <td className="px-6 py-4">
-                        <div className="flex space-x-2">
-
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserCheck />
-
-                            </button>
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserGear />
-
-                            </button>
-                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                <FaUserMinus />
-
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
             </tbody>
+
         </table>
+
+
     )
 }
 

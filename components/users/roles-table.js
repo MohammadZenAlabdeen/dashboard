@@ -1,11 +1,12 @@
 'use client'
-import Link from "next/link";
-import { FaUserMinus } from "react-icons/fa6";
-import { IoSettings } from "react-icons/io5";
+
 import { useState, useEffect } from 'react'
+import Spinner from "../main-spinner/spinner";
+import BtnGroupRolesTable from "../btn-group-userTable/btn-group-rolesTable";
 
 
 function RolesTable() {
+    
 
     const [roles, setRoles] = useState(null)
 
@@ -16,16 +17,16 @@ function RolesTable() {
             setRoles(data)
         }
         fetchRoles()
+        
     }, [])
 
-    console.log(roles);
-    if (!roles) return <div>Loading...</div>
+    // console.log(roles)
+    if (!roles) return  <Spinner />
+    
 
     return (
+        
         <div>
-
-
-
 
             <table className="  text-sm text-left w-full text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-title-secondary  border-b-1 border-title-black uppercase bg-light shadow-2xl dark:bg-gray-700 dark:text-gray-400">
@@ -60,7 +61,7 @@ function RolesTable() {
                                     </p>
                                 </td>
                                 */}
-                                <td ke className="px-6 py-4 ">
+                                <td  className="px-6 py-4 ">
                                     <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">
 
                                         {role.name}
@@ -73,20 +74,7 @@ function RolesTable() {
                                 </td>
 
                                 <td className="px-6 py-4">
-                                    <div className="flex space-x-2">
-
-
-                                        <Link href='/users/username'>
-                                            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                                <IoSettings />
-                                            </button>
-                                        </Link>
-                                        <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                                            <FaUserMinus />
-
-                                        </button>
-
-                                    </div>
+                                <BtnGroupRolesTable />
                                 </td>
                             </tr>
                         ))
@@ -96,7 +84,7 @@ function RolesTable() {
             </table>
 
             {/*items*/}
-
+            
         </div>
     )
 }
