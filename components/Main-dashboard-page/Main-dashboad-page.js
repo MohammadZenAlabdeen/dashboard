@@ -4,8 +4,10 @@ import MainCategoryesPage from "@/components/categoryes/main-categoryes";
 
 import { notFound, usePathname } from "next/navigation";
 
+
+
 function MainPage() {
-    
+
     const path = usePathname();
 
     if (!path.startsWith('/categoryes') && !path.startsWith('/users')) {

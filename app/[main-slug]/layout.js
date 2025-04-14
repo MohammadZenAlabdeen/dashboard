@@ -1,4 +1,3 @@
-'use client'
 import NavBar from "@/components/main-navbar/nav-bar";
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/main-sidebar/app-sidebar";

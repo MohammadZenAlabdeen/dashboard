@@ -5,7 +5,7 @@ export const metadata = {
   description: "Dashboard",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children}) {
   return (
     <html lang="en">
       <body data-theme="light">
