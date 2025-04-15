@@ -20,7 +20,7 @@ function RolesTable() {
         
     }, [])
 
-    // console.log(roles)
+     console.log(roles)
     if (!roles) return  <Spinner />
     
 

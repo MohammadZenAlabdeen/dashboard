@@ -3,7 +3,7 @@ import AddRolePage from "@/components/users/add-role";
 import AddUserPage from "@/components/users/add-user";
 import EditUserPage from "@/components/users/edit-user";
 
-import { notFound, usePathname } from "next/navigation";
+import { notFound, usePathname ,href} from "next/navigation";
 
 
 
@@ -22,8 +22,8 @@ export default function EditUser() {
                 <AddUserPage />
             }
             {
-                (path == '/users/username') &&
-                <EditUserPage />
+                (path === ('/users/edit-user')) &&
+                notFound()
             }
             {
                 (path == '/users/add-role') &&

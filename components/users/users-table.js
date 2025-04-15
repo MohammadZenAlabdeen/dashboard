@@ -19,9 +19,11 @@ function UsersTable() {
         fetchUsers()
     }, [])
 
-     console.log(users);
+    console.log(users);
     if (!users) return <Spinner />
     console.log(users.users)
+
+    
 
     return (
 
@@ -47,7 +49,7 @@ function UsersTable() {
 
                 {
                     (users.users).map(user =>
-                        <tr key={user._id} className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
+                        (<tr key={user._id} className="bg-light text-title-black font-semibold border-b dark:bg-gray-800 dark:border-gray-700 border-title-thirdly">
 
                             <td className="px-6 py-4">
                                 {user.name}
@@ -62,9 +64,9 @@ function UsersTable() {
                                 </p>
                             </td>
                             <td className="px-6 py-4">
-                                <BtnGroupUserTable />
+                                <BtnGroupUserTable href={user._id}/>
                             </td>
-                        </tr>
+                        </tr>)
                     )
                 }
 

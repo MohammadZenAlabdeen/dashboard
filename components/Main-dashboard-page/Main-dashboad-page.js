@@ -10,9 +10,7 @@ function MainPage() {
 
     const path = usePathname();
 
-    if (!path.startsWith('/categoryes') && !path.startsWith('/users')) {
-        notFound();
-    }
+    
     return (
         <div >
             { /* ----Categoryes---- */

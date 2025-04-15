@@ -1,7 +1,24 @@
 import Link from "next/link";
+
 import { FaUserCheck, FaUserGear, FaUserMinus } from "react-icons/fa6";
 
-function BtnGroupUserTable() {
+function BtnGroupUserTable({ href }) {
+
+
+    
+
+        const handleRemove =() => {
+            
+            fetch('/api/users/67febcc0b1f8dadbc542b22f', // /api/users/{ href }
+                { method: 'DELETE' }
+            )
+                .then(() => this.setState(
+                    { status: 'Delete successful' }
+                ));
+        }
+    
+
+
     return (
         <div className="flex space-x-2">
 
@@ -9,13 +26,15 @@ function BtnGroupUserTable() {
                 <FaUserCheck />
 
             </button>
-            <Link href='/users/username'>
+            <Link href={`/users/edit-user/${href}`}>
                 <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
                     <FaUserGear />
 
                 </button>
             </Link>
-            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
+            <button
+                onClick={handleRemove}
+                className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
                 <FaUserMinus />
 
             </button>
