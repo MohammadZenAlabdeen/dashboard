@@ -5,6 +5,7 @@ import { hashUserPassword } from "@/utils/hash";
 import connectMongoDB from "@/utils/mongodb";
 import { UserSchema } from "@/utils/validation";
 import VerifyToken from "@/utils/verify-token";
+import { ZodError } from "zod";
 
 export async function PUT(req, { params }) {
     await connectMongoDB();
