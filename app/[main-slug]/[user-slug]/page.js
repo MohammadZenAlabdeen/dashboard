@@ -1,19 +1,12 @@
 'use client'
+import AddCategoryesPage from "@/components/categoryes/add-categoryes-page";
 import AddRolePage from "@/components/users/add-role";
 import AddUserPage from "@/components/users/add-user";
-import EditUserPage from "@/components/users/edit-user";
-
-import { notFound, usePathname ,href} from "next/navigation";
-
-
-
+import { notFound, usePathname, href } from "next/navigation";
 
 export default function EditUser() {
 
     const path = usePathname()
-
-
-
 
     return (
         <>
@@ -29,7 +22,10 @@ export default function EditUser() {
                 (path == '/users/add-role') &&
                 <AddRolePage />
             }
-
+            {
+                (path == '/categoryes/add-categoryes') &&
+                <AddCategoryesPage />
+            }
         </>
     )
 }

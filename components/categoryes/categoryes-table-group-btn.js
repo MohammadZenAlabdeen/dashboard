@@ -1,11 +1,12 @@
+'use client'
 import Link from "next/link";
-import { FaMinus } from "react-icons/fa6";
-import { IoSettings } from "react-icons/io5";
+import { FaGear, FaMinus } from "react-icons/fa6";
 
-function BtnGroupRolesTable({ href }) {
+function CategoryesTableGroupBtn({ href }) {
+
     const handleDelete = async () => {
 
-        const apiUrl = `/api/roles/${href}`;
+        const apiUrl = `/api/categories/${href}`;
 
         try {
             const response = await fetch(apiUrl, {
@@ -17,19 +18,18 @@ function BtnGroupRolesTable({ href }) {
             });
 
             const data = await response.json();
-            console.log('Delete Role Done:', data);
+            console.log('Delete Category Done:', data);
 
         } catch (error) {
-            console.log('Error Role Error:', error);
+            console.log('Error Delete Category:', error);
         }
-
     };
+
     return (
         <div className="flex space-x-2">
-            <Link href={`/users/edit-role/${href}`}>
-                <button
-                    className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                    <IoSettings />
+            <Link href={`categoryes/edit-category/${href}`}>
+                <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
+                    <FaGear />
                 </button>
             </Link>
             <form>
@@ -44,4 +44,4 @@ function BtnGroupRolesTable({ href }) {
     )
 }
 
-export default BtnGroupRolesTable
+export default CategoryesTableGroupBtn

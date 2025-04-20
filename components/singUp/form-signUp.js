@@ -1,12 +1,12 @@
 'use client'
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-
+import { useRouter } from 'next/navigation';
 
 function SignUpForm() {
-    
+
     const notify = (message) => toast(message);
-    
+    const router = useRouter();
 
     const [newUser, setNewUser] = useState(
         {
@@ -33,8 +33,10 @@ function SignUpForm() {
 
             const data = await response.json();
             console.log('Sign Up Done', data);
-
             notify(data.message);
+            if (response.ok) {
+                return router.push('/sign-in')
+            }
 
         } catch (error) {
             console.log('Error Sign Up:', error);

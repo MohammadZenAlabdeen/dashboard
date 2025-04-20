@@ -1,15 +1,12 @@
 'use client'
-
-
 import { useState, useEffect } from 'react'
 import Spinner from "../main-spinner/spinner";
 import BtnGroupUserTable from "../btn-group-userTable/btn-group-userTable";
 
 function UsersTable() {
 
-
-    const [users, setUsers] = useState(null)
-
+    const [users, setUsers] = useState(null);
+    
     useEffect(() => {
         async function fetchUsers() {
             const res = await fetch('/api/users')
@@ -22,9 +19,7 @@ function UsersTable() {
     console.log(users);
     if (!users) return <Spinner />
     console.log(users.users)
-
     
-
     return (
 
         <table className="  text-sm text-left w-full text-gray-500 dark:text-gray-400">
@@ -64,17 +59,13 @@ function UsersTable() {
                                 </p>
                             </td>
                             <td className="px-6 py-4">
-                                <BtnGroupUserTable href={user._id}/>
+                                <BtnGroupUserTable href={user._id} />
                             </td>
                         </tr>)
                     )
                 }
-
             </tbody>
-
         </table>
-
-
     )
 }
 

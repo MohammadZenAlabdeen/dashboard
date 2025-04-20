@@ -1,8 +1,8 @@
-
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AddBtn from "../all-btn/main-btn/add-btn";
 
 function UsersTabs() {
+
     return (
         <div className=" bg-light w-full flex flex-col rounded-lg justify-between mb-3 sm:flex-row space-y-1 py-1 sm:space-y-0 sm:space-x-2 px-3 sm:py-3">
             <div className="">
@@ -27,8 +27,6 @@ function UsersTabs() {
                     </AddBtn>
                 </TabsContent>
             </div>
-
-
         </div>
     )
 }

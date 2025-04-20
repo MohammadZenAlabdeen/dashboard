@@ -1,25 +1,21 @@
 'use client'
 import MainUsersPage from "@/components/users/main-users";
 import MainCategoryesPage from "@/components/categoryes/main-categoryes";
+import { usePathname } from "next/navigation";
 
-import { notFound, usePathname } from "next/navigation";
-
-
-
-function MainPage() {
+function MainPage({ role }) {
 
     const path = usePathname();
 
-    
     return (
         <div >
+
             { /* ----Categoryes---- */
                 (path == '/categoryes') &&
-                <MainCategoryesPage />
+                <MainCategoryesPage role={role} />
             }
             { /* ----Users---- */
-
-                (path == '/users') &&
+                ((path == '/users')) &&
                 <MainUsersPage />
             }
 

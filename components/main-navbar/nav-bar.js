@@ -2,14 +2,10 @@ import { CgProfile } from "react-icons/cg";
 import { SidebarTrigger } from "../ui/sidebar";
 import LogOutBtn from "../all-btn/log-out-btn";
 
+function NavBar({ name, role }) {
 
-
- function NavBar() {
-    
-     
     return (
         <div className=" w-full relative top-0 right-0 flex justify-between items-center py-2 px-3   border-b-secondary bg-light">
-
             <div>
                 <SidebarTrigger className='bg-primary ' />
             </div>
@@ -20,16 +16,14 @@ import LogOutBtn from "../all-btn/log-out-btn";
                 <div>
                     <div className="flex flex-col justify-center items-center -space-y-2">
                         <div className="text-black text-md font-bold">
-                        xxxx
+                            {name}
                         </div>
                         <div className="text-title-secondary text-md">
-                            xxx
+                            {role}
                         </div>
                     </div>
-
                 </div>
                 <LogOutBtn />
-
             </div>
         </div>
     )

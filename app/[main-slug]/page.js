@@ -8,24 +8,19 @@ async function MainDashBoardPage() {
   const token = (await cookies()).get("jwtToken");
   const payload = await ValidateToken(token.value);
 
-
-
-
-  if(payload==null){
+  if (payload == null) {
     console.log("Payload Error");
   }
-  else
-  {
+  else {
     console.log(payload)
   }
- 
+
   return (
-<>
-    <MainPage />
-    
-</>
+    <>
+      <MainPage role={payload.role} />
+    </>
   )
-  
+
 }
 
 export default MainDashBoardPage

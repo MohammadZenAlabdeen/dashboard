@@ -1,12 +1,12 @@
 'use client'
 import { FaSync } from "react-icons/fa";
-
 import { useState, useEffect } from 'react'
 import Spinner from "../main-spinner/spinner";
+import { useRouter } from 'next/navigation'
 
 function EditUserPage({ userId }) {
 
-
+    const router = useRouter()
 
     //Fetch Data
     const [roles, setRoles] = useState(null);
@@ -22,7 +22,6 @@ function EditUserPage({ userId }) {
             role: ''
         }
     );
-
 
 
     useEffect(() => {
@@ -49,13 +48,6 @@ function EditUserPage({ userId }) {
     console.log(roles);
 
     if (!users) return <Spinner />
-
-
-
-
-    //Update Data
-
-
 
     const handleSubmit = async (e) => {
 
@@ -93,7 +85,9 @@ function EditUserPage({ userId }) {
 
             const data = await response.json();
             console.log('Update User Done', data);
-
+            if (response.ok) {
+                return router.push('/users')
+            }
 
 
         } catch (error) {
@@ -159,7 +153,7 @@ function EditUserPage({ userId }) {
                             placeholder={users.user.role.name} />
                     </div>
 
-                    
+
 
                     <div className="mb-5">
                         <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Edit Role</label>
@@ -172,7 +166,7 @@ function EditUserPage({ userId }) {
                                 key={users.user.role._id}
                                 value={users.user.role._id}>
                                 -- {users.user.role.name} --
-                            </option> 
+                            </option>
                             {
                                 (roles.role).map((role) => (
 

@@ -1,43 +1,48 @@
+'use client'
 import Link from "next/link";
-
-import { FaUserCheck, FaUserGear, FaUserMinus } from "react-icons/fa6";
+import { FaUserGear, FaUserMinus } from "react-icons/fa6";
 
 function BtnGroupUserTable({ href }) {
 
+    const handleDelete = async () => {
 
-    
+        const apiUrl = `/api/users/${href}`;
 
-        const handleRemove =() => {
-            
-            fetch('/api/users/67febcc0b1f8dadbc542b22f', // /api/users/{ href }
-                { method: 'DELETE' }
-            )
-                .then(() => this.setState(
-                    { status: 'Delete successful' }
-                ));
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(),
+            });
+
+            const data = await response.json();
+            console.log('Delete User Done:', data);
+
+        } catch (error) {
+            console.log('Error User Error:', error);
         }
-    
+    };
+
 
 
     return (
         <div className="flex space-x-2">
-
-            <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                <FaUserCheck />
-
-            </button>
             <Link href={`/users/edit-user/${href}`}>
-                <button className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
+                <button
+                    className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
                     <FaUserGear />
-
                 </button>
             </Link>
-            <button
-                onClick={handleRemove}
-                className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
-                <FaUserMinus />
-
-            </button>
+            <form>
+                <button
+                    type="submit"
+                    onClick={handleDelete}
+                    className="p-2 bg-primary text-light text-xl rounded-md cursor-pointer hover:bg-title-thirdly hover:text-primary">
+                    <FaUserMinus />
+                </button>
+            </form>
 
         </div>
     )

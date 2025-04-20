@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 function SignInForm() {
+    const router = useRouter();
 
     const notify = (message) => toast(message);
 
@@ -12,7 +14,6 @@ function SignInForm() {
             password: ''
         }
     );
-
 
     const handleSubmit = async (e) => {
 
@@ -29,10 +30,12 @@ function SignInForm() {
                 body: JSON.stringify(User),
             });
 
-
             const data = await response.json();
             console.log('Sign In Done', data);
             notify(data.message);
+            if (response.ok) {
+                return router.push('/categoryes')
+            }
 
         } catch (error) {
             console.log('Error Log In:', error)
