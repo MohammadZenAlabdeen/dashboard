@@ -6,11 +6,8 @@ import connectMongoDB from "@/utils/mongodb";
 import { UserSchema } from "@/utils/validation";
 import VerifyToken from "@/utils/verify-token";
 import { ZodError } from "zod";
-<<<<<<< HEAD
 import { formatZodErrors } from "@/utils/custom-errors";
 
-=======
->>>>>>> ac5bae58f484bb242ce5c8641e8edd68b4abde08
 
 export async function PUT(req, { params }) {
     await connectMongoDB();
