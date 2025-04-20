@@ -1,12 +1,11 @@
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 import { SidebarTrigger } from "../ui/sidebar";
-import { BiLogOutCircle } from "react-icons/bi";
+import LogOutBtn from "../all-btn/log-out-btn";
 
-function NavBar() {
+function NavBar({ name, role }) {
+
     return (
         <div className=" w-full relative top-0 right-0 flex justify-between items-center py-2 px-3   border-b-secondary bg-light">
-
             <div>
                 <SidebarTrigger className='bg-primary ' />
             </div>
@@ -17,21 +16,18 @@ function NavBar() {
                 <div>
                     <div className="flex flex-col justify-center items-center -space-y-2">
                         <div className="text-black text-md font-bold">
-                            name
+                            {name}
                         </div>
                         <div className="text-title-secondary text-md">
-                            admin
+                            {role}
                         </div>
                     </div>
-
                 </div>
-                <div className="text-red-600 text-4xl cursor-pointer ">
-                    <BiLogOutCircle />
-                </div>
-
+                <LogOutBtn />
             </div>
         </div>
     )
 }
 
 export default NavBar
+

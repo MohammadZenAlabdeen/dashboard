@@ -15,17 +15,17 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 // Menu items.
-const items = [
-  {
+let items = [
+  /*{
     title: "Dashboard",
     url: "/dashboard",
     icon: Gauge,
-  },
+  },*/
   {
     title: "Categoryes",
     url: "/categoryes",
     icon: ChartBarStacked,
-  },
+  },/*
   {
     title: "Courses",
     url: "/courses",
@@ -45,13 +45,13 @@ const items = [
     title: "Clients",
     url: "/clients",
     icon: Users,
-  },
+  },*/
   {
     title: "Users",
     url: "/users",
     icon: User,
   },
-  {
+  /*{
     title: "Blogs",
     url: "/blogs",
     icon: BookOpen,
@@ -65,11 +65,17 @@ const items = [
     title: "Settings",
     url: "/Settings",
     icon: Cog,
-  },
+  },*/
 ]
 
-export function AppSidebar() {
+export function AppSidebar({role}) {
+
   const path = usePathname();
+  if(role == 'user')
+  {
+    items = items.filter(el => el.title !== 'Users')
+  }
+
   return (
     <Sidebar>
       <SidebarContent className='bg-light'>

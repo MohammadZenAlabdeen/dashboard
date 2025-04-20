@@ -1,33 +1,26 @@
-'use client'
-import MainUsersPage from "@/components/users/main-users";
-import MainCategoryesPage from "@/components/categoryes/main-categoryes";
-
-import { notFound, usePathname } from "next/navigation";
+import MainPage from "@/components/Main-dashboard-page/Main-dashboad-page";
+import { cookies } from "next/headers";
+import ValidateToken from "@/utils/validate_token";
 
 
+async function MainDashBoardPage() {
 
+  const token = (await cookies()).get("jwtToken");
+  const payload = await ValidateToken(token.value);
 
-
-function MainDashBoardPage() {
-  const path = usePathname();
-
-  if(!path.startsWith('/categoryes') && !path.startsWith('/users')){
-    notFound();
+  if (payload == null) {
+    console.log("Payload Error");
   }
-  return (
-    <div >
-      { /* ----Categoryes---- */
-        (path == '/categoryes') &&
-        <MainCategoryesPage />
-      }
-      { /* ----Users---- */
+  else {
+    console.log(payload)
+  }
 
-        (path == '/users') &&
-        <MainUsersPage />
-      }
-      
-    </div>
+  return (
+    <>
+      <MainPage role={payload.role} />
+    </>
   )
+
 }
 
 export default MainDashBoardPage

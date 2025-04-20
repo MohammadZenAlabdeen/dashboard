@@ -1,11 +1,10 @@
 import WelcomePage from "@/components/welcome/welcome-page";
 
-
-export default function Home() {
-
+ function Home() {  
   return (
     <>
       <WelcomePage />
     </>
   );
 }
+export default Home;

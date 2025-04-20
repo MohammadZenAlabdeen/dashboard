@@ -1,7 +1,9 @@
+import Link from "next/link";
 import PrimaryIntroButton from "../all-btn/intro-btn/primary-intro-btn";
 import SecondaryIntroBtn from "../all-btn/intro-btn/secondary-intro-btn";
 
 function WelcomePage() {
+
   return (
     <div className="w-screen h-screen flex justify-center items-center ">
       <div className="flex flex-col mx-auto text-center ">
@@ -12,7 +14,6 @@ function WelcomePage() {
               BSC
             </span><br />
             CENTER</h1>
-
           <p className=" text-3xl sm:5xl  sm:px-3 font-extralight max-w-2xl mb-5 text-title-secondary lg:text-xl dark:text-gray-400">
             based on
             <span className="text-transparent mx-1 font-light  bg-clip-text  bg-gradient-to-r to-primary from-secondary">
@@ -22,31 +23,29 @@ function WelcomePage() {
             <span className="text-transparent mx-1 font-light bg-clip-text bg-gradient-to-r to-primary from-secondary">
               strong
             </span>
-
             capabilities
             <br /> to  make  you the best version of
             <span className="text-transparent mx-1 font-light bg-clip-text bg-gradient-to-r to-primary from-secondary">
               yourself.
             </span>
-
           </p>
         </div>
-
         <div className="w-full flex justify-center items-center text-center">
 
-          
-            <SecondaryIntroBtn href='/sign-up'>
+          <Link href='/sign-up'>
+            <SecondaryIntroBtn>
               Register Now
             </SecondaryIntroBtn>
-         
-          
-            <PrimaryIntroButton href='/sign-in'>
+          </Link>
+
+          <Link href='/sign-in'>
+            <PrimaryIntroButton>
               Sign In
             </PrimaryIntroButton>
-          
+          </Link>
+
         </div>
       </div>
-
     </div>
   )
 }

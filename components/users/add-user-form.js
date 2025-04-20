@@ -1,26 +1,40 @@
 'use client'
-import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
+import SaveBtn from '../all-btn/main-btn/save-btn';
+import Spinner from "../main-spinner/spinner";
+import { useRouter } from 'next/navigation'
 
-function SignUpForm() {
+function AddUserForm() {
 
-    const notify = (message) => toast(message);
-    const router = useRouter();
-
+    const router = useRouter()
     const [newUser, setNewUser] = useState(
         {
             name: '',
             email: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            role: '',
+
         }
     );
+    const [roles, setRoles] = useState(null)
+
+    useEffect(() => {
+        async function fetchRoles() {
+            const res = await fetch('/api/roles')
+            const data = await res.json()
+            setRoles(data)
+        }
+        fetchRoles()
+
+    }, [])
+
+    if (!roles) return <Spinner />
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const apiUrl = '/api/register';
+        const apiUrl = '/api/users';
 
         try {
             const response = await fetch(apiUrl, {
@@ -32,26 +46,19 @@ function SignUpForm() {
             });
 
             const data = await response.json();
-            console.log('Sign Up Done', data);
-            notify(data.message);
+            console.log('Add User Done', data);
             if (response.ok) {
-                return router.push('/sign-in')
+                return router.push('/users')
             }
 
         } catch (error) {
-            console.log('Error Sign Up:', error);
+            console.log('Error Add User:', error);
         }
     };
 
-
     return (
         <form className="w-full px-2 " onSubmit={handleSubmit}>
-            <div className="mb-6 ">
 
-                <h2 className="text-light bg-primary inline text-center px-3 pb-2 rounded min-w-sm text-4xl font-bold ">Sign Up</h2>
-
-                <p className="text-secondary mt-3">Enter your name or email and password to sign up!</p>
-            </div>
             <div className="mb-5">
                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-title-black dark:text-white">Email</label>
                 <input type="email" id="email" name="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} className="bg-light border border-secondary text-title-black font-bold text-sm rounded-sm  focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="your Email" required />
@@ -68,14 +75,20 @@ function SignUpForm() {
                 <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-title-black dark:text-white">Confirm confirmPassword</label>
                 <input type="password" id="confirmPassword" value={newUser.confirmPassword} onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })} className="bg-light border border-secondary text-title-black font-bold text-sm rounded-sm  focus:border-light block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="********" required />
             </div>
-            <button type="submit" className=" flex-1 inline-flex items-center justify-center cursor-pointer p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-title-black rounded-lg group bg-gradient-to-br to-primary from-secondary group-hover:from-secondary group-hover:to-primary hover:text-light dark:text-white">
-                <span className="w-full px-5 py-2.5 transition-all ease-in duration-75 bg-light dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-                    Sign Up
-                </span>
-            </button>
-            <ToastContainer autoClose={3000} />
+
+            <div className="mb-5">
+                <label htmlFor="roles" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Role</label>
+                <select id="roles" name='roles' onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} className="bg-gray-50  border border-secondary text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {
+                        (roles.role).map((role) => (
+                            <option key={role._id} value={role._id}>{role.name}</option>
+                        ))
+                    }
+                </select>
+            </div>
+            <SaveBtn />
         </form>
     )
 }
 
-export default SignUpForm
+export default AddUserForm
