@@ -7,13 +7,14 @@ import { serialize } from "cookie";
 import connectMongoDB from "@/utils/mongodb";
 import { ValidationError, GenericError, formatZodErrors } from "@/utils/custom-errors";
 import { hashUserPassword } from "@/utils/hash";
+import VerifyToken from "@/utils/verify-token";
+import ValidateToken from "@/utils/validate_token";
 
 export async function POST(req) {
     const data = await req.json();
     await connectMongoDB();
     try {
         LoginSchema.parse({ email: data.email, password: data.password });
-        console.log(data.email)
         const user = await User.findOne({ email: data.email }).populate("role");
         if (!user) {
             throw new GenericError("Invalid email or password", 401);
@@ -23,8 +24,7 @@ export async function POST(req) {
         if (!isPasswordValid) {
             throw new GenericError("Invalid email or password", 401);
         }
-
-        const token = generatetoken(user.name, user.role.name);
+        const token = generatetoken(user._id,user.email,user.name, user.role.name);
         const cookie = serialize("jwtToken", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
