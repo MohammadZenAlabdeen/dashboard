@@ -18,7 +18,6 @@ export async function POST(req) {
         RegisterSchema.parse({ name: data.name, email: data.email, password: data.password, confirmPassword: data.confirmPassword });
 
         const password = hashUserPassword(data.password);
-        const token = generatetoken(data.name, "user");
 
         let role = await Role.findOne({ name: "user" });
         if (!role) {
@@ -44,13 +43,16 @@ export async function POST(req) {
             throw new GenericError("The email is already in use", 409);
         }
 
-        await User.create({
+       user= await User.create({
             name: data.name,
             email: data.email,
             password: password,
-            token: token,
+            token:"",
             role: role._id,
         });
+        const token = generatetoken(user._id,user.email,user.name,"user");
+        user.token=token;
+        user.save();
 
         const cookie = serialize("jwtToken", token, {
             httpOnly: true,

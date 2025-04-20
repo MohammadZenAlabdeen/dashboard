@@ -9,12 +9,13 @@ export async function GET(req) {
     await connectMongoDB();
     try {
         const payload = await VerifyToken(req);
+        console.log(payload)
 
-        if (!payload.email) {
+        if (!payload.email||!payload.name||!payload.id||!payload.role) {
             throw new TokenError("Invalid token");
         }
 
-        const user = await User.updateOne({ email: payload.email }, { $set: { token: "" } });
+        const user = await User.updateOne({ _id:payload.id }, { $set: { token: "" } });
         if (!user) {
             throw new GenericError("Failed to log out user", 500);
         }
