@@ -53,11 +53,11 @@ function UsersTable() {
                                 {user.email}
                             </td>
 
-                            <td className="px-6 py-4 ">
+                            { <td className="px-6 py-4 ">
                                 <p className="text-dark bg-title-thirdly inline py-1 px-2 rounded ">
-                                    {user.role.name}
+                                    {user?.role?.name}
                                 </p>
-                            </td>
+                            </td> }
                             <td className="px-6 py-4">
                                 <BtnGroupUserTable href={user._id} />
                             </td>
