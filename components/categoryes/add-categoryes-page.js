@@ -13,16 +13,12 @@ function AddCategoryesPage() {
             name: ''
         }
     );
-
+    const onChangeHandle=(e)=>{
+        setNewCategory({name:e.target.value})
+    }
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-
-        let form = e.target;
-        let formData = new FormData(form);
-        let formDataObj = Object.fromEntries(formData.entries())
-
-        setNewCategory(formDataObj); //formDataObj is Object {key:"value"}
 
         const apiUrl = '/api/categories';
 
@@ -56,7 +52,7 @@ function AddCategoryesPage() {
             <form className="mx-auto">
                 <div className="mb-5 p-5 rounded-lg bg-light w-full ">
                     <label htmlFor="category" className="block mb-2   font-medium text-title-black dark:text-white">category name</label>
-                    <input type="category" id="category" name='name' className="bg-light w-full  border border-secondary text-title-black font-bold  rounded-sm  focus:border-primary block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name" required />
+                    <input onChange={onChangeHandle} type="category" id="category" name='name' className="bg-light w-full  border border-secondary text-title-black font-bold  rounded-sm  focus:border-primary block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name" required />
                 </div>
                 <SaveBtn />
             </form>
