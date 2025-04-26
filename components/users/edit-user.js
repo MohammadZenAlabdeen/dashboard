@@ -98,10 +98,6 @@ function EditUserPage({ userId }) {
     };
 
 
-
-
-
-
     return (
         <div className="container mx-auto ">
             <div className="py-4">
@@ -179,11 +175,7 @@ function EditUserPage({ userId }) {
                             }
                         </select>
                     </div>
-
-
                 </div>
-
-                <p>{users.message}</p>
 
                 <button type="submit" className=" bg-primary text-light py-2.5 px-15 text-md font-bold rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-title-black">
                     <FaSync />
